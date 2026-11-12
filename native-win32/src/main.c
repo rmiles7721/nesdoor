@@ -182,7 +182,7 @@ static int key(int ms){
  }
 }
 static void drain(void){int q=0;while(q<150){if(key(25)>0)q=0;else q+=25;}}
-static int menu(void){int sel=0,k,i,top;char t[300];drain();
+static int menu(void){int sel=0,k,i,top,redraw=1;char t[300];drain();
  if(nrom==0){
   door_printf("\x1b[0m\x1b[2J\x1b[H\x1b[?25l");
   door_printf("\x1b[8;25H\x1b[1;31mNO NES ROMS FOUND");
@@ -193,7 +193,7 @@ static int menu(void){int sel=0,k,i,top;char t[300];drain();
    if(k=='q'||k=='Q'||k==17||k<0)return -1;
   }
  }
- for(;;){top=(sel/14)*14;door_printf("\x1b[0m\x1b[2J\x1b[H\x1b[?25l");door_printf("\x1b[3;29H\x1b[1;36mNeeds a sixel terminal such as SyncTERM");door_printf("\x1b[4;36H\x1b[1;32mNES ARCADE");door_printf("\x1b[6;4H\x1b[1;32m%d games",nrom);for(i=top;i<nrom&&i<top+14;i++){titleof(roms[i],t,sizeof(t));if(i==sel)door_printf("\x1b[%d;9H\x1b[44;1;37m%2d. %-58.58s\x1b[0m",8+i-top,i+1,t);else door_printf("\x1b[%d;11H\x1b[0;37m%2d. %s",8+i-top,i+1,t);}door_printf("\x1b[23;58H\x1b[1;33m%d of %d",sel+1,nrom);door_printf("\x1b[24;4H\x1b[1;36mUP/DOWN choose   PGUP/PGDN page   HOME/END   ENTER play");door_printf("\x1b[25;4H\x1b[1;36mCtrl+Q = leave");k=key(300);if(k<0)return -1;if(k==1001&&sel>0)sel--;else if(k==1002&&sel<nrom-1)sel++;else if(k==1005){sel-=14;if(sel<0)sel=0;}else if(k==1006){sel+=14;if(sel>=nrom)sel=nrom-1;}else if(k==1007)sel=0;else if(k==1008)sel=nrom-1;else if(k==13)return sel;else if(k==17||k=='q'||k=='Q')return-1;}}
+ for(;;){top=(sel/14)*14;if(redraw){redraw=0;door_printf("\x1b[0m\x1b[2J\x1b[H\x1b[?25l");door_printf("\x1b[3;29H\x1b[1;36mNeeds a sixel terminal such as SyncTERM");door_printf("\x1b[4;36H\x1b[1;32mNES ARCADE");door_printf("\x1b[6;4H\x1b[1;32m%d games",nrom);for(i=top;i<nrom&&i<top+14;i++){titleof(roms[i],t,sizeof(t));if(i==sel)door_printf("\x1b[%d;9H\x1b[44;1;37m%2d. %-58.58s\x1b[0m",8+i-top,i+1,t);else door_printf("\x1b[%d;11H\x1b[0;37m%2d. %s",8+i-top,i+1,t);}door_printf("\x1b[23;58H\x1b[1;33m%d of %d",sel+1,nrom);door_printf("\x1b[24;4H\x1b[1;36mUP/DOWN choose   PGUP/PGDN page   HOME/END   ENTER play");door_printf("\x1b[25;4H\x1b[1;36mCtrl+Q = leave");}k=key(300);if(k<0)return -1;if(k==0)continue;redraw=1;if(k==1001&&sel>0)sel--;else if(k==1002&&sel<nrom-1)sel++;else if(k==1005){sel-=14;if(sel<0)sel=0;}else if(k==1006){sel+=14;if(sel>=nrom)sel=nrom-1;}else if(k==1007)sel=0;else if(k==1008)sel=nrom-1;else if(k==13)return sel;else if(k==17||k=='q'||k=='Q')return-1;}}
 static void pxrect(uint8_t *im,int W,int H,int x0,int y0,int x1,int y1,int r,int g,int b){
  int x,y;(void)r;
  if(x0<0)x0=0;if(y0<0)y0=0;if(x1>=W)x1=W-1;if(y1>=H)y1=H-1;
